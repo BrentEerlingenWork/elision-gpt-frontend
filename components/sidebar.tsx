@@ -31,7 +31,7 @@ export function Sidebar() {
           <Link
             key={conv.id}
             href={`/conversation/${conv.id}`}
-            className="block py-2 px-4 hover:bg-gray-700 rounded mb-1 flex items-center"
+            className="py-2 px-4 hover:bg-gray-700 rounded mb-1 flex items-center"
           >
             <MessageCircle className="mr-2" size={20} />
             {conv.title}
