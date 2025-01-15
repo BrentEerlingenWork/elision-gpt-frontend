@@ -1,21 +1,21 @@
-'use client'
+'use client';
 
-import { MessageCircle, PlusCircle } from 'lucide-react'
-import Link from 'next/link'
-import { useState } from 'react'
+import { MessageCircle, PlusCircle } from 'lucide-react';
+import Link from 'next/link';
+import { useState } from 'react';
 
-type Conversation = {
-  id: number,
-  title: string
-}
+import { Conversation } from '../lib/types';
 
 export function Sidebar() {
-  const [conversations, setConversations] = useState<Conversation[]>([])
+  const [conversations, setConversations] = useState<Conversation[]>([]);
 
   const startNewConversation = () => {
-    const newId = conversations.length + 1
-    setConversations([...conversations, { id: newId, title: `Conversation ${newId}` }])
-  }
+    const newId = conversations.length + 1;
+    setConversations([
+      ...conversations,
+      { id: newId, title: `Conversation ${newId}` },
+    ]);
+  };
 
   return (
     <div className="w-64 bg-gray-800 text-white p-4 flex flex-col h-full">
@@ -39,6 +39,5 @@ export function Sidebar() {
         ))}
       </nav>
     </div>
-  )
+  );
 }
-

@@ -1,50 +1,59 @@
-'use client'
+'use client';
 
 import { Send } from 'lucide-react';
 import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 
 type Message = {
-  role: 'user' | 'assistant'
-  content: string
-}
+  role: 'user' | 'assistant';
+  content: string;
+};
 
 export function Chat() {
-  const [messages, setMessages] = useState<Message[]>([])
-  const [input, setInput] = useState('')
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [input, setInput] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!input.trim()) return
+    e.preventDefault();
+    if (!input.trim()) return;
 
-    const userMessage: Message = { role: 'user', content: input }
-    setMessages((prev) => [...prev, userMessage])
-    setInput('')
+    const userMessage: Message = { role: 'user', content: input };
+    setMessages((prev) => [...prev, userMessage]);
+    setInput('');
 
     try {
-      const response = await fetch('http://localhost:5000/query', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_ENDPOINT!}/query`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ query: input, history: messages }),
         },
-        body: JSON.stringify({ query: input }),
-      })
+      );
 
       if (!response.ok) {
-        throw new Error('API request failed')
+        throw new Error('API request failed');
       }
 
-      const data = await response.json()
-      const assistantMessage: Message = { role: 'assistant', content: data.response }
-      setMessages((prev) => [...prev, assistantMessage])
+      const data = await response.json();
+      const assistantMessage: Message = {
+        role: 'assistant',
+        content: data.response,
+      };
+      setMessages((prev) => [...prev, assistantMessage]);
     } catch (error) {
-      console.error('Error:', error)
+      console.error('Error:', error);
       setMessages((prev) => [
         ...prev,
-        { role: 'assistant', content: 'Sorry, there was an error processing your request.' },
-      ])
+        {
+          role: 'assistant',
+          content: 'Sorry, there was an error processing your request.',
+        },
+      ]);
     }
-  }
+  };
 
   return (
     <div className="flex-1 flex flex-col bg-white">
@@ -63,7 +72,7 @@ export function Chat() {
                   : 'bg-gray-200 text-gray-800'
               }`}
             >
-                    <ReactMarkdown>{message.content}</ReactMarkdown>
+              <ReactMarkdown>{message.content}</ReactMarkdown>
             </div>
           </div>
         ))}
@@ -86,6 +95,5 @@ export function Chat() {
         </div>
       </form>
     </div>
-  )
+  );
 }
-

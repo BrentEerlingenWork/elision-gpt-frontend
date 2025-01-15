@@ -1,19 +1,17 @@
-import { NextResponse } from 'next/server'
+import { NextResponse } from 'next/server';
 
-let conversations = [
-  { id: 1, title: 'Conversation 1' },
-  { id: 2, title: 'Conversation 2' },
-]
+import { Conversation } from '../../../lib/types';
+
+let conversations: Conversation[] = [];
 
 export async function GET() {
-  return NextResponse.json(conversations)
+  return NextResponse.json(conversations);
 }
 
 export async function POST(request: Request) {
-  const { title } = await request.json()
-  const newId = conversations.length + 1
-  const newConversation = { id: newId, title }
-  conversations.push(newConversation)
-  return NextResponse.json(newConversation)
+  const { title } = await request.json();
+  const newId = conversations.length + 1;
+  const newConversation = { id: newId, title };
+  conversations.push(newConversation);
+  return NextResponse.json(newConversation);
 }
-
