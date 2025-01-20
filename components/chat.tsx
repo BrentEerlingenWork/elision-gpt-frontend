@@ -2,7 +2,7 @@
 
 import 'highlight.js/styles/github-dark.css';
 
-import { Send } from 'lucide-react';
+import { Loader2, Send } from 'lucide-react';
 import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import rehypeHighlight from 'rehype-highlight';
@@ -15,6 +15,7 @@ type Message = {
 export function Chat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,6 +24,7 @@ export function Chat() {
     const userMessage: Message = { role: 'user', content: input };
     setMessages((prev) => [...prev, userMessage]);
     setInput('');
+    setIsLoading(true);
 
     try {
       const response = await fetch(
@@ -56,6 +58,8 @@ export function Chat() {
           content: 'Sorry, there was an error processing your request.',
         },
       ]);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -70,7 +74,7 @@ export function Chat() {
             }`}
           >
             <div
-              className={`max-w-xs md:max-w-md lg:max-w-lg xl:max-w-xl rounded-lg p-3 ${
+              className={`max-w-xs md:max-w-md lg:max-w-lg xl:max-w-xl rounded-lg p-3 flex flex-col gap-3 ${
                 message.role === 'user'
                   ? 'bg-blue-500 text-white'
                   : 'bg-gray-200 text-gray-800'
@@ -100,6 +104,16 @@ export function Chat() {
             </div>
           </div>
         ))}
+        {isLoading && (
+          <div className="flex justify-start">
+            <div className="bg-gray-200 text-gray-800 rounded-lg p-3 flex items-center">
+              <Loader2 className="animate-spin mr-2" size={20} />
+              <span>
+                Our SAP expert is thinking hard to answer your question...
+              </span>
+            </div>
+          </div>
+        )}
       </div>
       <form onSubmit={handleSubmit} className="p-4 border-t border-gray-200">
         <div className="flex items-center">
