@@ -1,8 +1,11 @@
 'use client';
 
+import 'highlight.js/styles/github-dark.css';
+
 import { Send } from 'lucide-react';
 import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
+import rehypeHighlight from 'rehype-highlight';
 
 type Message = {
   role: 'user' | 'assistant';
@@ -30,6 +33,7 @@ export function Chat() {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({ query: input, history: messages }),
+          mode: 'cors',
         },
       );
 
@@ -72,7 +76,27 @@ export function Chat() {
                   : 'bg-gray-200 text-gray-800'
               }`}
             >
-              <ReactMarkdown>{message.content}</ReactMarkdown>
+              <ReactMarkdown
+                rehypePlugins={[rehypeHighlight]}
+                components={{
+                  code({ node, className, children, ...props }) {
+                    const match = /language-(\w+)/.exec(className || '');
+                    return match ? (
+                      <pre className="rounded-md p-4 bg-gray-800 text-white overflow-x-auto">
+                        <code className={className} {...props}>
+                          {children}
+                        </code>
+                      </pre>
+                    ) : (
+                      <code className={className} {...props}>
+                        {children}
+                      </code>
+                    );
+                  },
+                }}
+              >
+                {message.content}
+              </ReactMarkdown>
             </div>
           </div>
         ))}
